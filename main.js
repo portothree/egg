@@ -7,10 +7,14 @@ const votesSelector = {
 };
 
 (async function main() {
-	const [url] = process.argv.slice(2);
+	const [url, vote] = process.argv.slice(2);
 
 	if (!url) {
 		throw new Error('No URL provided');
+	}
+
+	if (!vote || !votesSelector[vote]) {
+		throw new Error('No valid vote provided');
 	}
 
 	let driver = await new Builder().forBrowser('firefox').build();
@@ -28,8 +32,10 @@ const votesSelector = {
 		let emoji = '';
 
 		while (emoji !== egg) {
-			const A = await driver.findElement(By.xpath(votesSelector.A));
-			A.click();
+			const voteElement = await driver.findElement(
+				By.xpath(votesSelector[vote])
+			);
+			voteElement.click();
 		}
 	} finally {
 		await driver.quit();
